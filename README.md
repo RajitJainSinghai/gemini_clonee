@@ -1,94 +1,65 @@
+# Deploying React + Vite Website on GitHub Pages
 
-# 🚀 React + Vite + TypeScript Project
+To deploy your React application created with Vite on GitHub Pages, follow these steps:
 
-Welcome to the **React + Vite + TypeScript** project! This guide will help you  deploy your project on **GitHub Pages** using `gh-pages`.  
+## 1. Update `package.json`
+   
+Add the following line to your `package.json` file:
+   ```json
+   "homepage": "https://<GitHub username>.github.io/<repository name>"
+   ```
 
-## 🌐 GitHub Pages Deployment
-### 5️⃣ Add GitHub Pages Configuration
-In `vite.config.ts`, add the following:
+Also, add the following scripts:
+   ```json
+   "predeploy": "npm run build",
+   "deploy": "gh-pages -d dist",
+   ```
 
-```ts
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+## 2. Update `vite.config.js`
+   
+Add the `base` property inside the default export in your `vite.config.js` file:
+   ```javascript
+   export default {
+     base: "./<repository name>/",
+   };
+   ```
 
-export default defineConfig({
-  plugins: [react()],
-  base: '/REPOSITORY_NAME/', // 👈 Add this line
-})
-```
+## 3. Install `gh-pages` Package
+   
+Run the following command in your terminal to install `gh-pages` as a dev dependency:
+   ```bash
+   npm install --save-dev gh-pages
+   ```
 
----
+## 4. Build the App
+   
+Run the following command to build the app and generate the `dist` folder:
+   ```bash
+   npm run build
+   ```
 
-### 6️⃣ Build the Project
-Generate the production build:
+## 5. Deploy the App
+   
+Run the following command in your terminal:
+   ```bash
+   npm run deploy
+   ```
 
-```bash
-npm run build
-```
+## 6. Push Code to the Main Branch
+   
+Commit and push all your changes to the main branch of your GitHub repository.
 
----
 
-### 7️⃣ Deploy to GitHub Pages
-1. Install `gh-pages`:
+## 7. Configure GitHub Pages
+   
+Go to your repository settings on GitHub:
+   - Navigate to the `Settings` tab.
+   - Under the `Pages` section, set the branch to `gh-pages`.
 
-```bash
-npm install gh-pages --save-dev
-```
 
-2. Add these scripts to **`package.json`**:
+## 8. Wait and Verify
+   
+Wait for 3-5 minutes, then refresh the `Pages` section in your repository settings. At the top, you should see the URL of your live website.
 
-```json
-"scripts": {
-  "predeploy": "npm run build",
-  "deploy": "gh-pages -d dist"
-}
-```
+Your website is now live on GitHub Pages! 🚀
 
-3. Deploy:
-
-```bash
-npm run deploy
-```
-
----
-
-### 8️⃣ GitHub Pages Settings
-1. Go to **Settings → Pages**  
-2. Set branch to **`gh-pages`** and directory to **`/ (root)`**  
-3. Save changes  
-
----
-
-## 🎯 Access the Site
-🌍 Your project will be live at:  
-➡️ **https://USERNAME.github.io/REPOSITORY_NAME/**  
-
----
-
-## 💡 Update and Redeploy
-To update and redeploy after making changes:
-
-```bash
-git add .
-git commit -m "Updated changes"
-git push origin main
-npm run deploy
-```
-
----
-
-## 🛠️ Tech Stack
-- ⚛️ **React** – Frontend framework  
-- 🚀 **Vite** – Build tool  
-- 🏆 **TypeScript** – Type safety  
-- 🌍 **GitHub Pages** – Hosting  
-
----
-
-## 🤝 Contributing
-Feel free to submit pull requests or raise issues! 😊  
-
----
-
-## ⭐ Show Your Support
-If you found this helpful, please ⭐ the repository!  
