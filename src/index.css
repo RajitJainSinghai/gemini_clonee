@@ -205,6 +205,7 @@ padding: 10px;
   align-items: start;
   gap: 20px;
   font-size: 14px;
+  position: relative;
 }
 .loader {
   width: 100%;
@@ -236,12 +237,15 @@ padding: 10px;
 }
 
 @media (max-width : 600px) {
-  .sidebar {
-  display: none;
+  .main .greet {
+    font-size: 24px;
+}
+.main .card {
+  height: 100px;
 }
 .main-bottom input {
   flex: none;
-  width: 150px;
+  width: 75%;
 }
 .main-bottom img {
   width: 20px;
@@ -252,4 +256,17 @@ padding: 10px;
 .search-box div {
   gap: 5px;
 }
+.hide {
+  display: none;
+}
+.main .card p {
+  font-size: 14px;
+}
+.speak-btn, .stop-btn {
+  right: 0;
+  background: white;
+  position: absolute;
+  top: -34px;
+}
+
 }

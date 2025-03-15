@@ -4,75 +4,81 @@ import run from "./gemini";
 export const Context = createContext();
 
 const ContextProvider = (props) => {
+    const [input, setInput] = useState("");
+    const [recentPrompt, setRecentPrompt] = useState("");
+    const [prevPrompts, setPrevPrompts] = useState([]);
+    const [showResult, setShowResult] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [resultData, setResultData] = useState("");
 
-    const[input, setInput] = useState("");
-    const[recentPrompt, setRecentPrompt] = useState("");
-    const[prevPrompts, setPrevPrompts] = useState([]);
-    const[showResult, setShowResult] = useState(false);
-    const[loading, setLoading] = useState(false);
-    const[resultData, setResultData] = useState("");
+    // ✅ Handles smooth text display word by word
+    const displayTextGradually = (text) => {
+        const words = text.split(" ");
+        setResultData(""); // Clear previous result
+        words.forEach((word, index) => {
+            setTimeout(() => {
+                setResultData((prev) => prev + word + " ");
+            }, 50 * index);
+        });
+    };
 
-    const delayPara = (index, nextWord) => {
-        setTimeout(function () {
-            setResultData(prev=>prev+nextWord)
-
-        },75*index)
-    }
-
+    // ✅ Start a new chat (Clear results)
     const newChat = () => {
-        setLoading(false)
-        setShowResult(false)
-    }
+        setLoading(false);
+        setShowResult(false);
+        setResultData("");
+        setRecentPrompt("");
+    };
 
-    const onSent = async (prompt) => {
-        
-        setResultData("")
-        setLoading(true)
-        setShowResult(true)
-        let response;
-        if(prompt !== undefined) {
-            response = await run(prompt)
-            setRecentPrompt(prompt)
+    // ✅ Send prompt and update history
+    const onSent = async (prompt = input) => {
+        if (!prompt.trim()) return; // Prevent empty searches
+
+        setResultData("");
+        setLoading(true);
+        setShowResult(true);
+        setRecentPrompt(prompt);
+
+        // ✅ Update history (avoid duplicates)
+        setPrevPrompts((prev) => (prev.includes(prompt) ? prev : [prompt, ...prev]));
+
+        // ✅ Fetch AI response
+        const response = await run(prompt);
+        const formattedResponse = response
+            .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>") // Bold formatting
+            .replace(/\*/g, "<br>"); // Line breaks
+
+        displayTextGradually(formattedResponse); // Show response gradually
+        setLoading(false);
+        setInput(""); // Clear input field
+    };
+
+    // ✅ Trigger search when "Enter" is pressed
+    const handleKeyPress = (e) => {
+        if (e.key === "Enter") {
+            onSent();
         }
-        else {
-            setPrevPrompts(prev=>[...prev,input])
-            setRecentPrompt(input)
-            response = await run(input);
-        }
-        
-        let responseArray = response.split("**");
-        let newResponse="";
-        for (let i = 0; i < responseArray.length; i++) {
-            if (i === 0 || i%2 !== 1) {
-                newResponse += responseArray[i];  
-            }
-            else {
-                newResponse += "<b>"+responseArray[i]+"</b>";
-            }
-        }
-        let newResponse2 = newResponse.split("*").join("</br>")
-        // setResultData(newResponse2)
-        let newResponseArray = newResponse2.split(" ");
-        for(let i=0; i<newResponseArray.length; i++) {
-            const nextWord = newResponseArray[i];
-            delayPara(i, nextWord+" ")
-        }
-        setLoading(false)
-        setInput("")
-    }
+    };
 
     const contextValue = {
-        prevPrompts,setPrevPrompts,
-        onSent,setRecentPrompt,
-        recentPrompt,showResult,
-        loading, resultData,input,setInput,newChat
+        prevPrompts,
+        onSent,
+        setRecentPrompt,
+        recentPrompt,
+        showResult,
+        loading,
+        resultData,
+        input,
+        setInput,
+        newChat,
+        handleKeyPress,
+    };
 
-    }
     return (
-        <Context.Provider value={contextValue} >
+        <Context.Provider value={contextValue}>
             {props.children}
-            </Context.Provider>
-    )
-}
+        </Context.Provider>
+    );
+};
 
-export default ContextProvider
+export default ContextProvider;
